@@ -273,9 +273,9 @@ You can test:
 
 ---
 
-## 6. Dependency Injection in Spring
+## 6. Dependency Injection — Deeper Dive
 
-Spring manages object creation and wiring through **dependency injection**.
+In Day 1 we learned that Spring manages beans and injects them through constructors. Now let's go deeper.
 
 ### Constructor Injection (Recommended)
 
@@ -296,6 +296,101 @@ public class CarServiceImpl implements CarService {
 - All dependencies are clear and required
 - Easy to test — just pass mocks in the constructor
 - No need for `@Autowired` when there's only one constructor
+
+### Other Injection Styles (Know They Exist, Don't Use Them)
+
+```java
+// ❌ Field injection — works but NOT recommended
+@Service
+public class CarServiceImpl implements CarService {
+    @Autowired
+    private CarRepository carRepository;   // not final, hidden dependency
+}
+
+// ❌ Setter injection — rarely needed
+@Service
+public class CarServiceImpl implements CarService {
+    private CarRepository carRepository;
+
+    @Autowired
+    public void setCarRepository(CarRepository carRepository) {
+        this.carRepository = carRepository;
+    }
+}
+```
+
+Stick with **constructor injection**. It's the Spring team's own recommendation.
+
+### Bean Lifecycle
+
+Every bean goes through a lifecycle managed by Spring:
+
+```
+1. Instantiation         → Spring calls the constructor
+2. Dependency Injection  → Spring injects dependencies
+3. @PostConstruct        → Your initialization code runs
+4. ─── Bean is ready ─── → App uses the bean normally
+5. @PreDestroy           → Your cleanup code runs (on shutdown)
+6. Destruction           → Bean is removed from the container
+```
+
+### Lifecycle Hooks — @PostConstruct and @PreDestroy
+
+Use these to run code right after a bean is created or right before it's destroyed:
+
+```java
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+
+@Service
+public class CarServiceImpl implements CarService {
+
+    private final CarRepository carRepository;
+
+    public CarServiceImpl(CarRepository carRepository) {
+        this.carRepository = carRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("CarServiceImpl bean created and ready!");
+        // Good for: logging, cache warming, validation
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        System.out.println("CarServiceImpl shutting down...");
+        // Good for: closing connections, flushing buffers
+    }
+
+    // ... service methods
+}
+```
+
+> **When would you use these?** `@PostConstruct` is useful when you need to do setup that requires injected dependencies (the constructor runs *before* everything is wired). `@PreDestroy` is useful for releasing resources.
+
+### Bean Scopes
+
+Day 1 mentioned that beans are **singletons by default**. Here are the available scopes:
+
+| Scope | Behavior | When to use |
+|-------|----------|-------------|
+| `singleton` (default) | One instance shared everywhere | Services, repositories, controllers — almost everything |
+| `prototype` | New instance every time it's requested | Stateful objects that shouldn't be shared |
+| `request` | One instance per HTTP request | Web-specific, rarely needed |
+| `session` | One instance per HTTP session | Web-specific, rarely needed |
+
+```java
+import org.springframework.context.annotation.Scope;
+
+@Service
+@Scope("prototype")   // New instance every time — NOT the default
+public class ReportGenerator {
+    // Each caller gets their own ReportGenerator
+}
+```
+
+> **In practice:** You'll use singleton scope 99% of the time. Only reach for `prototype` if a bean holds mutable state that shouldn't be shared between callers.
 
 ---
 
