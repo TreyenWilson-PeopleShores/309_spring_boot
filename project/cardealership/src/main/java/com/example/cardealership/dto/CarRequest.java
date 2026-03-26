@@ -1,11 +1,28 @@
 package com.example.cardealership.dto;
+import jakarta.validation.constraints.*;
 
 public class CarRequest {
+
+    @NotBlank(message = "Make is required")
+    @Size(min = 2, max = 50, message = "Make must be between 2 and 50 characters")
     private String make;
+
+    @NotBlank(message = "Model is required")
+    @Size(min = 1, max = 50, message = "Model must be between 1 and 50 characters")
     private String model;
+
+    @Min(value = 1886, message = "Year must be 1886 or later")
+    @Max(value = 2026, message = "Year cannot be more than 1 year in the future")
     private int year;
+
+    @NotBlank(message = "Color is required")
     private String color;
+
+    @Positive(message = "Price must be greater than zero")
     private double price;
+
+    // Keep existing constructors, getters, setters
+
 
     public CarRequest() {}
 
