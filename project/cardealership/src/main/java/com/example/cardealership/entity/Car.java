@@ -20,6 +20,13 @@ public class Car {
     private String color;
     private double price;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+
+
     public Car() {}
 
     public Car(String make, String model, int year, String color, double price) {
@@ -29,6 +36,9 @@ public class Car {
         this.color = color;
         this.price = price;
     }
+
+
+
 
     // Generate getters and setters for all fields
     // Generate toString()
@@ -45,9 +55,15 @@ public class Car {
     public void setColor(String color) { this.color = color; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+    public Owner getOwner() { return owner; }
+    public void setOwner(Owner owner) { this.owner = owner; }
+
 
     @Override
     public String toString() {
         return year + " " + make + " " + model + " (" + color + ") - $" + price;
     }
+
+
+
 }

@@ -2,6 +2,7 @@ package com.example.cardealership.controller;
 
 import com.example.cardealership.dto.CarRequest;
 import com.example.cardealership.dto.CarResponse;
+import com.example.cardealership.repository.OwnerRepository;
 import com.example.cardealership.service.CarService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import java.util.List;
 public class CarController {
 
     private final CarService carService;
-
     public CarController(CarService carService) {
         this.carService = carService;
     }
@@ -48,5 +48,13 @@ public class CarController {
     public ResponseEntity<Void> deleteCar(@PathVariable Long id) {
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
+    }
+//
+    @PutMapping("/{carId}/owner/{ownerId}")
+    public ResponseEntity<CarResponse> assignOwner(
+            @PathVariable Long carId,
+            @PathVariable Long ownerId) {
+        CarResponse response = carService.assignOwner(carId, ownerId);
+        return ResponseEntity.ok(response);
     }
 }

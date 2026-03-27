@@ -1,10 +1,12 @@
 package com.example.cardealership.service;
 
-import com.example.cardealership.dto.CarRequest;import com.example.cardealership.dto.CarResponse;
+import com.example.cardealership.dto.CarRequest;
+import com.example.cardealership.dto.CarResponse;
 import com.example.cardealership.entity.Car;
 import com.example.cardealership.mapper.CarMapper;
 import com.example.cardealership.repository.CarRepository;
 import org.springframework.stereotype.Service;
+import com.example.cardealership.entity.Car.*;
 
 import java.util.List;
 
@@ -49,6 +51,11 @@ public class CarServiceImpl implements CarService {
         Car updated = carRepository.save(car);
         return carMapper.toResponse(updated);
     }
+
+    @Override // MAY BE WRONG EDITOR ADDED
+    public CarResponse assignOwner(Long carId, Long ownerId) {
+        return null;
+    } // MAY BE WRONG EDITOR ADDED
 
     @Override
     public void deleteCar(Long id) {
