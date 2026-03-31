@@ -4,6 +4,7 @@ import com.example.cardealership.dto.CarRequest;
 import com.example.cardealership.dto.CarResponse;
 import com.example.cardealership.repository.OwnerRepository;
 import com.example.cardealership.service.CarService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,17 @@ public class CarController {
         this.carService = carService;
     }
 
-    @GetMapping
+    /*@GetMapping
     public List<CarResponse> getAllCars() {
         return carService.getAllCars();
+    }*/
+    @GetMapping
+    public Page<CarResponse> getAllCars(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        return carService.getAllCars(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")
@@ -56,5 +65,11 @@ public class CarController {
             @PathVariable Long ownerId) {
         CarResponse response = carService.assignOwner(carId, ownerId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/search")
+    public List<CarResponse> search(@RequestParam String q) {
+        System.out.println("In Controller");
+        return carService.searchCars(q);
     }
 }

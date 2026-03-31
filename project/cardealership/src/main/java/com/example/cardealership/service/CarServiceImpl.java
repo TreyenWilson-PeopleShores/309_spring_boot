@@ -3,8 +3,13 @@ package com.example.cardealership.service;
 import com.example.cardealership.dto.CarRequest;
 import com.example.cardealership.dto.CarResponse;
 import com.example.cardealership.entity.Car;
+import com.example.cardealership.exception.ResourceNotFoundException;
 import com.example.cardealership.mapper.CarMapper;
 import com.example.cardealership.repository.CarRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import com.example.cardealership.entity.Car.*;
 
@@ -21,20 +26,25 @@ public class CarServiceImpl implements CarService {
         this.carMapper = carMapper;
     }
 
-    @Override
-    public List<CarResponse> getAllCars() {
+
+    /*public List<CarResponse> getAllCars() {
         return carRepository.findAll()
                 .stream()
                 .map(carMapper::toResponse)
                 .toList();
+    }*/
+    @Override
+    public Page<CarResponse> getAllCars(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return carRepository.findAll(pageable)
+                .map(carMapper::toResponse);
     }
 
-    @Override
-    public CarResponse getCarById(Long id) {
-        Car car = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
-        return carMapper.toResponse(car);
-    }
 
     @Override
     public CarResponse createCar(CarRequest request) {
@@ -43,14 +53,7 @@ public class CarServiceImpl implements CarService {
         return carMapper.toResponse(saved);
     }
 
-    @Override
-    public CarResponse updateCar(Long id, CarRequest request) {
-        Car car = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
-        carMapper.updateEntity(car, request);
-        Car updated = carRepository.save(car);
-        return carMapper.toResponse(updated);
-    }
+
 
     @Override // MAY BE WRONG EDITOR ADDED
     public CarResponse assignOwner(Long carId, Long ownerId) {
@@ -58,9 +61,33 @@ public class CarServiceImpl implements CarService {
     } // MAY BE WRONG EDITOR ADDED
 
     @Override
+    public CarResponse getCarById(Long id) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", id));
+        return carMapper.toResponse(car);
+    }
+
+    @Override
+    public CarResponse updateCar(Long id, CarRequest request) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Car", id));
+        carMapper.updateEntity(car, request);
+        return carMapper.toResponse(carRepository.save(car));
+    }
+
+    @Override
     public void deleteCar(Long id) {
         Car car = carRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Car not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Car", id));
         carRepository.delete(car);
     }
+    @Override
+    public List<CarResponse> searchCars(String keyword) {
+        //System.out.println("In Implementation");
+        return carRepository.searchByKeyword(keyword)
+                .stream()
+                .map(carMapper::toResponse)
+                .toList();
+    }
+
 }

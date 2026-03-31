@@ -1,7 +1,11 @@
 package com.example.cardealership.dto;
+import com.example.cardealership.entity.Car;
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 public class CarRequest {
+
 
     @NotBlank(message = "Make is required")
     @Size(min = 2, max = 50, message = "Make must be between 2 and 50 characters")
@@ -33,6 +37,7 @@ public class CarRequest {
         this.color = color;
         this.price = price;
     }
+
 
     public String getMake() { return make; }
     public void setMake(String make) { this.make = make; }

@@ -1,4 +1,5 @@
 package com.example.cardealership.service;
+import com.example.cardealership.exception.ResourceNotFoundException;
 import com.example.cardealership.mapper.CarMapper;
 import  com.example.cardealership.mapper.CarMapper.*;
 import com.example.cardealership.dto.CarResponse;
@@ -37,7 +38,7 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public OwnerResponse getOwnerById(Long id) {
         Owner owner = ownerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Owner not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Owner" + id));
         return ownerMapper.toResponse(owner);
     }
 
@@ -50,9 +51,9 @@ public class OwnerServiceImpl implements OwnerService {
     @Override
     public CarResponse assignOwner(Long carId, Long ownerId) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Owner"));
         Owner owner = ownerRepository.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Owner"));
         car.setOwner(owner);
         Car saved = carRepository.save(car);
         return carMapper.toResponse(saved);
