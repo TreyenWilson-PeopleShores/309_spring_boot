@@ -42,5 +42,15 @@ public class DataLoader implements CommandLineRunner {
         } else {
             System.out.println("=== Database already seeded — skipping ===");
         }
+        carRepository.save(new Car("Toyota", "Camry", 2023, "Silver", 28000));
+        carRepository.save(new Car("Toyota", "Corolla", 2022, "White", 22000));
+        carRepository.save(new Car("Honda", "Civic", 2022, "Blue", 24000));
+        carRepository.save(new Car("Honda", "Accord", 2023, "Black", 32000));
+        carRepository.save(new Car("Ford", "Mustang", 2024, "Red", 45000));
+        carRepository.save(new Car("Ford", "F-150", 2023, "White", 38000));
+        carRepository.save(new Car("BMW", "330i", 2023, "Black", 46000));
+        carRepository.save(new Car("BMW", "X5", 2024, "Blue", 62000));
+        carRepository.save(new Car("Tesla", "Model 3", 2024, "White", 42000));
+        carRepository.save(new Car("Tesla", "Model Y", 2024, "Red", 52000));
     }
 }

@@ -25,6 +25,16 @@ public class CarController {
     public List<CarResponse> getAllCars() {
         return carService.getAllCars();
     }*/
+    @GetMapping("/filter")
+    public List<CarResponse> filterCars(
+            @RequestParam(required = false) String make,
+            @RequestParam(required = false) String color,
+            @RequestParam(required = false) Integer minYear,
+            @RequestParam(required = false) Integer maxYear,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        return carService.filterCars(make, color, minYear, maxYear, minPrice, maxPrice);
+    }
     @GetMapping
     public Page<CarResponse> getAllCars(
             @RequestParam(defaultValue = "0") int page,

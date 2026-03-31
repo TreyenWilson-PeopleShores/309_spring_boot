@@ -18,5 +18,8 @@ public interface CarService {
 
     List<CarResponse> searchCars(String q);
 
+    List<CarResponse> filterCars(String make, String color,
+                                 Integer minYear, Integer maxYear, Double minPrice, Double maxPrice);
 }
+
 

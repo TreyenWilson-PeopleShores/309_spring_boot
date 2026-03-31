@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import com.example.cardealership.entity.Car.*;
 
 import java.util.List;
 
@@ -89,5 +88,12 @@ public class CarServiceImpl implements CarService {
                 .map(carMapper::toResponse)
                 .toList();
     }
-
+@Override
+public List<CarResponse> filterCars(String make, String color,
+                                    Integer minYear, Integer maxYear, Double minPrice, Double maxPrice) {
+        return carRepository.filterCars(make, color, minYear, maxYear, minPrice, maxPrice)
+                .stream()
+                .map(carMapper::toResponse)
+                .toList();
+    }
 }
